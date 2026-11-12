@@ -43,25 +43,30 @@ final class Videos {
 	 * @throws Unsupported_Value_Exception A field that is not supported was passed in `$fields`.
 	 */
 	public static function get( $parent_id, $pagination_helper, $options ) {
+		$show_names = 'true' === $options->get( 'image_names' );
+		$fields     = array(
+			'id',
+			'mimeType',
+			'size',
+			'webContentLink',
+			'webViewLink',
+			'thumbnailLink',
+			'videoMediaMetadata' => array( 'width', 'height' ),
+			'copyRequiresWriterPermission',
+			'permissions'        => array( 'type', 'role' ),
+		);
+
+		if ( $show_names ) {
+			$fields[] = 'name';
+		}
+
 		return API_Facade::list_videos(
 			$parent_id,
-			new API_Fields(
-				array(
-					'id',
-					'mimeType',
-					'size',
-					'webContentLink',
-					'webViewLink',
-					'thumbnailLink',
-					'videoMediaMetadata' => array( 'width', 'height' ),
-					'copyRequiresWriterPermission',
-					'permissions'        => array( 'type', 'role' ),
-				)
-			),
+			new API_Fields( $fields ),
 			$pagination_helper,
 			$options->get( 'image_ordering' )
 		)->then(
-			static function ( $raw_videos ) use ( $options ) {
+			static function ( $raw_videos ) use ( $options, $show_names ) {
 				$raw_videos         = array_values(
 					array_filter(
 						$raw_videos,
@@ -71,8 +76,8 @@ final class Videos {
 					)
 				);
 				$videos             = array_map(
-					static function ( $video ) use ( $options ) {
-						return array(
+					static function ( $video ) use ( $options, $show_names ) {
+						$ret = array(
 							'height'    => array_key_exists( 'videoMediaMetadata', $video ) &&
 								array_key_exists( 'height', $video['videoMediaMetadata'] )
 								? $video['videoMediaMetadata']['height']
@@ -87,6 +92,12 @@ final class Videos {
 								? $video['videoMediaMetadata']['width']
 								: '0',
 						);
+
+						if ( $show_names && array_key_exists( 'name', $video ) ) {
+							$ret['name'] = Images::display_name( $video['name'] );
+						}
+
+						return $ret;
 					},
 					$raw_videos
 				);

@@ -29,34 +29,33 @@ final class Images {
 	 * @param Pagination_Helper $pagination_helper An initialized pagination helper.
 	 * @param Options_Proxy     $options The configuration of the gallery.
 	 *
-	 * @return PromiseInterface A promise resolving to a list of images in the format `['id' =>, 'id', 'description' => 'description', 'image' => 'image', 'thumbnail' => 'thumbnail']`.
+	 * @return PromiseInterface A promise resolving to a list of images in the format `['id' =>, 'id', 'description' => 'description', 'image' => 'image', 'thumbnail' => 'thumbnail']`, plus `'name' => 'name'` if image names are enabled.
 	 *
 	 * @throws Internal_Exception The method was called without an initialized batch.
 	 * @throws Plugin_Not_Authorized_Exception Not authorized.
 	 * @throws Unsupported_Value_Exception A field that is not supported was passed in `$fields`.
 	 */
 	public static function get( $parent_id, $pagination_helper, $options ) {
-		if ( 'time' === $options->get_by( 'image_ordering' ) ) {
-			$order_by = 'name';
-			$fields   = new API_Fields(
-				array(
-					'id',
-					'thumbnailLink',
-					'createdTime',
-					'imageMediaMetadata' => array( 'time' ),
-					'description',
-				)
-			);
-		} else {
-			$order_by = $options->get( 'image_ordering' );
-			$fields   = new API_Fields( array( 'id', 'thumbnailLink', 'description' ) );
+		$show_names = 'true' === $options->get( 'image_names' );
+		$fields     = array( 'id', 'thumbnailLink', 'description' );
+
+		if ( $show_names ) {
+			$fields[] = 'name';
 		}
 
-		return API_Facade::list_images( $parent_id, $fields, $pagination_helper, $order_by )->then(
-			static function ( $image_response ) use ( $options ) {
+		if ( 'time' === $options->get_by( 'image_ordering' ) ) {
+			$order_by                     = 'name';
+			$fields[]                     = 'createdTime';
+			$fields['imageMediaMetadata'] = array( 'time' );
+		} else {
+			$order_by = $options->get( 'image_ordering' );
+		}
+
+		return API_Facade::list_images( $parent_id, new API_Fields( $fields ), $pagination_helper, $order_by )->then(
+			static function ( $image_response ) use ( $options, $show_names ) {
 				$images = array_map(
-					static function ( $image ) use ( $options ) {
-						return array(
+					static function ( $image ) use ( $options, $show_names ) {
+						$ret = array(
 							'description' => array_key_exists( 'description', $image )
 								? esc_attr( $image['description'] )
 								: '',
@@ -66,6 +65,12 @@ final class Images {
 								'h' .
 								floor( 1.25 * $options->get( 'grid_height' ) ),
 						);
+
+						if ( $show_names && array_key_exists( 'name', $image ) ) {
+							$ret['name'] = self::display_name( $image['name'] );
+						}
+
+						return $ret;
 					},
 					$image_response
 				);
@@ -80,6 +85,25 @@ final class Images {
 				return self::order( $images, $image_timestamps, $options );
 			}
 		);
+	}
+
+	/**
+	 * Formats a file name for display in the gallery.
+	 *
+	 * Removes the file extension and escapes the name for use in HTML.
+	 *
+	 * @param string $name The raw file name.
+	 *
+	 * @return string The escaped name without the extension.
+	 */
+	public static function display_name( $name ) {
+		$dot = mb_strrpos( $name, '.' );
+
+		if ( false !== $dot && $dot > 0 ) {
+			$name = mb_substr( $name, 0, $dot );
+		}
+
+		return esc_html( $name );
 	}
 
 	/**
@@ -108,11 +132,11 @@ final class Images {
 	/**
 	 * Orders images.
 	 *
-	 * @param array<array{id: string, description: string, image: string, thumbnail: string, timestamp?: int}> $images A list of images in the format `['id' =>, 'id', 'description' => 'description', 'image' => 'image', 'thumbnail' => 'thumbnail']`.
+	 * @param array<array{id: string, description: string, image: string, thumbnail: string, name?: string, timestamp?: int}> $images A list of images in the format `['id' =>, 'id', 'description' => 'description', 'image' => 'image', 'thumbnail' => 'thumbnail']`.
 	 * @param array<int>                                                                                       $image_timestamps The timestamps for each image.
 	 * @param Options_Proxy                                                                                    $options The configuration of the gallery.
 	 *
-	 * @return array<array{id: string, description: string, image: string, thumbnail: string}> An ordered list of images in the format `['id' =>, 'id', 'description' => 'description', 'image' => 'image', 'thumbnail' => 'thumbnail']`.
+	 * @return array<array{id: string, description: string, image: string, thumbnail: string, name?: string}> An ordered list of images in the format `['id' =>, 'id', 'description' => 'description', 'image' => 'image', 'thumbnail' => 'thumbnail']`.
 	 */
 	private static function order( $images, $image_timestamps, $options ) {
 		if ( 'time' === $options->get_by( 'image_ordering' ) ) {

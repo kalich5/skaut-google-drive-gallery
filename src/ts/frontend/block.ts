@@ -19,6 +19,9 @@ function renderFrontend(): null {
 
 registerBlockType('skaut-google-drive-gallery/gallery', {
 	attributes: {
+		breadcrumbs_root: {
+			type: 'string',
+		},
 		dir_counts: {
 			type: 'string',
 		},
@@ -33,6 +36,9 @@ registerBlockType('skaut-google-drive-gallery/gallery', {
 		},
 		grid_spacing: {
 			type: 'number',
+		},
+		image_names: {
+			type: 'string',
 		},
 		image_ordering_by: {
 			type: 'string',

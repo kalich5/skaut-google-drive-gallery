@@ -10,9 +10,11 @@ declare interface BlockOrderingOption {
 }
 
 type BlockOptions =
+	| 'breadcrumbs_root'
 	| 'dir_counts'
 	| 'grid_height'
 	| 'grid_spacing'
+	| 'image_names'
 	| 'page_autoload'
 	| 'page_size'
 	| 'preview_loop'

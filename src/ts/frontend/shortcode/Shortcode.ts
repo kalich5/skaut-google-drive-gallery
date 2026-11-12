@@ -59,6 +59,13 @@ export class Shortcode {
 		return `<div class="sgdg-more-button"><div>${sgdgShortcodeLocalize.load_more}</div></div>`;
 	}
 
+	private static renderName(name: string | undefined): string {
+		if (name === undefined || '' === name) {
+			return '';
+		}
+		return `<div class="sgdg-item-name">${name}</div>`;
+	}
+
 	public onLightboxQuit(): void {
 		history.replaceState(
 			history.state,
@@ -216,7 +223,10 @@ export class Shortcode {
 			(data.path !== undefined && 0 < data.path.length) ||
 			(data.directories !== undefined && 0 < data.directories.length)
 		) {
-			html += this.renderBreadcrumbs(data.path ?? []);
+			html += this.renderBreadcrumbs(
+				data.path ?? [],
+				data.breadcrumbs_root ?? sgdgShortcodeLocalize.breadcrumbs_top
+			);
 		}
 		if (
 			(data.directories !== undefined && 0 < data.directories.length) ||
@@ -380,12 +390,13 @@ export class Shortcode {
 		}
 	}
 
-	private renderBreadcrumbs(path: Array<PartialDirectory>): string {
+	private renderBreadcrumbs(
+		path: Array<PartialDirectory>,
+		rootName: string
+	): string {
 		let html =
 			`<div>` +
-			`<a data-sgdg-path="" href="${this.pathQueryParameter.remove()}">${
-				sgdgShortcodeLocalize.breadcrumbs_top
-			}</a>`;
+			`<a data-sgdg-path="" href="${this.pathQueryParameter.remove()}">${rootName}</a>`;
 		let field = '';
 		$.each(path, (_, crumb) => {
 			field += crumb.id;
@@ -440,10 +451,14 @@ export class Shortcode {
 	}
 
 	private renderImage(page: number, image: Image): string {
-		return `<a class="sgdg-grid-a" data-imagelightbox="${this.shortHash}" data-ilb2-id="${image.id}" data-ilb2-caption="${image.description}" data-sgdg-page="${page.toString()}" href="${image.image}"><img class="sgdg-grid-img" src="${image.thumbnail}"></a>`;
+		const caption =
+			'' === image.description && image.name !== undefined
+				? image.name
+				: image.description;
+		return `<a class="sgdg-grid-a" data-imagelightbox="${this.shortHash}" data-ilb2-id="${image.id}" data-ilb2-caption="${caption}" data-sgdg-page="${page.toString()}" href="${image.image}"><img class="sgdg-grid-img" src="${image.thumbnail}">${Shortcode.renderName(image.name)}</a>`;
 	}
 
 	private renderVideo(page: number, video: Video): string {
-		return `<a class="sgdg-grid-a" data-imagelightbox="${this.shortHash}" data-ilb2-id="${video.id}" data-sgdg-page="${page.toString()}" data-ilb2-video='{ "controls": "controls", "autoplay": "autoplay", "height": ${typeof video.height === 'number' ? video.height.toString() : '0'}, "width": ${typeof video.width === 'number' ? video.width.toString() : '0'}, "sources": [ { "src": "${video.src}", "type": "${video.mimeType}" } ] }'><img class="sgdg-grid-img" src="${video.thumbnail}"></a>`;
+		return `<a class="sgdg-grid-a" data-imagelightbox="${this.shortHash}" data-ilb2-id="${video.id}" data-sgdg-page="${page.toString()}" data-ilb2-video='{ "controls": "controls", "autoplay": "autoplay", "height": ${typeof video.height === 'number' ? video.height.toString() : '0'}, "width": ${typeof video.width === 'number' ? video.width.toString() : '0'}, "sources": [ { "src": "${video.src}", "type": "${video.mimeType}" } ] }'><img class="sgdg-grid-img" src="${video.thumbnail}">${Shortcode.renderName(video.name)}</a>`;
 	}
 }
