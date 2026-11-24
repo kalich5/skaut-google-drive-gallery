@@ -105,7 +105,7 @@ final class Shortcode {
 	 *
 	 * @see \Sgdg\Frontend\Options_Proxy
 	 *
-	 * @param array<string, mixed> $atts A list of option overrides, as documented in the Options_Proxy class plus the `path` attribute, which is an array of directory names.
+	 * @param array<string, mixed> $atts A list of option overrides, as documented in the Options_Proxy class plus the `path` attribute, which is an array of directory names, and the optional `path_ids` attribute, which is an array of directory IDs taking precedence over `path`.
 	 *
 	 * @return string The HTML code for the block.
 	 *
@@ -157,9 +157,12 @@ final class Shortcode {
 
 		$root_path = Options::$root_path->get();
 		$root      = end( $root_path );
+		$names     = isset( $atts['path'] ) && is_array( $atts['path'] ) ? $atts['path'] : array();
 
-		if ( isset( $atts['path'] ) && '' !== $atts['path'] && count( $atts['path'] ) > 0 ) {
-			$root_promise = self::find_dir( $root, $atts['path'] );
+		if ( isset( $atts['path_ids'] ) && is_array( $atts['path_ids'] ) && count( $atts['path_ids'] ) > 0 ) {
+			$root = self::find_dir_by_ids( $root, array_map( 'strval', $atts['path_ids'] ), $names );
+		} elseif ( count( $names ) > 0 ) {
+			$root_promise = self::find_dir( $root, $names );
 			$root         = API_Client::execute( array( $root_promise ) )[0];
 		}
 
@@ -176,6 +179,45 @@ final class Shortcode {
 		return '<div class="sgdg-gallery-container" data-sgdg-hash="' .
 			$hash .
 			'"><div class="sgdg-loading"><div></div></div></div>';
+	}
+
+	/**
+	 * Finds the ID of the last directory in a path given by directory IDs.
+	 *
+	 * The IDs are not affected by renaming the directories. If the path is no longer valid (e.g. a directory was deleted and created again), the path given by names is used instead, if there is one.
+	 *
+	 * @param string        $root The ID of the root directory of the path.
+	 * @param array<string> $ids The IDs of the directories forming the path.
+	 * @param array<string> $names The names of the directories forming the path, used as a fallback.
+	 *
+	 * @return string The ID of the directory.
+	 *
+	 * @throws API_Exception A wrapped API exception.
+	 * @throws API_Rate_Limit_Exception Rate limit exceeded.
+	 * @throws Internal_Exception The method was called without an initialized batch.
+	 * @throws Not_Found_Exception The requested resource couldn't be found.
+	 * @throws Plugin_Not_Authorized_Exception Not authorized.
+	 * @throws Root_Not_Found_Exception The root directory of the gallery couldn't be found.
+	 */
+	private static function find_dir_by_ids( $root, array $ids, array $names ) {
+		$promise = Folder_Path::from_ids( $ids, $root )->then(
+			static function ( $folders ) {
+				return end( $folders )['id'];
+			},
+			static function ( $exception ) use ( $root, $names ) {
+				if ( ! ( $exception instanceof Directory_Not_Found_Exception ) ) {
+					return new RejectedPromise( $exception );
+				}
+
+				if ( 0 === count( $names ) ) {
+					return new RejectedPromise( new Root_Not_Found_Exception() );
+				}
+
+				return self::find_dir( $root, $names );
+			}
+		);
+
+		return API_Client::execute( array( $promise ) )[0];
 	}
 
 	/**

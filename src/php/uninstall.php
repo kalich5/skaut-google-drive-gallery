@@ -37,6 +37,10 @@ delete_option( 'sgdg_preview_loop' );
 delete_option( 'sgdg_preview_activity' );
 delete_option( 'sgdg_preview_captions' );
 
+delete_option( 'sgdg_block_ids_upgrade_done' );
+delete_option( 'sgdg_block_ids_upgrade_cursor' );
+wp_clear_scheduled_hook( 'sgdg_block_ids_upgrade' );
+
 // Deprecated.
 delete_option( 'sgdg_image_ordering' );
 delete_option( 'sgdg_thumbnail_size' );

@@ -7,6 +7,8 @@
 
 namespace Sgdg;
 
+use Sgdg\Admin\Block_Folders;
+use Sgdg\Admin\Block_Upgrade;
 use Sgdg\Admin\Settings_Pages;
 use Sgdg\Admin\TinyMCE_Plugin;
 use Sgdg\Frontend\Block;
@@ -36,6 +38,8 @@ final class Main {
 		new Video_Proxy();
 		new Settings_Pages();
 		new TinyMCE_Plugin();
+		new Block_Folders();
+		new Block_Upgrade();
 	}
 
 	/**

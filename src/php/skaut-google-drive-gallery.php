@@ -82,6 +82,7 @@ require_once __DIR__ . '/frontend/page/class-videos.php';
 require_once __DIR__ . '/frontend/interface-pagination-helper.php';
 require_once __DIR__ . '/frontend/class-api-fields.php';
 require_once __DIR__ . '/frontend/class-block.php';
+require_once __DIR__ . '/frontend/class-folder-path.php';
 require_once __DIR__ . '/frontend/class-gallery.php';
 require_once __DIR__ . '/frontend/class-gallery-context.php';
 require_once __DIR__ . '/frontend/class-paging-pagination-helper.php';
@@ -91,6 +92,8 @@ require_once __DIR__ . '/frontend/class-shortcode.php';
 require_once __DIR__ . '/frontend/class-single-page-pagination-helper.php';
 require_once __DIR__ . '/frontend/class-video-proxy.php';
 
+require_once __DIR__ . '/admin/class-block-folders.php';
+require_once __DIR__ . '/admin/class-block-upgrade.php';
 require_once __DIR__ . '/admin/class-oauth-helpers.php';
 require_once __DIR__ . '/admin/class-settings-pages.php';
 require_once __DIR__ . '/admin/class-tinymce-plugin.php';

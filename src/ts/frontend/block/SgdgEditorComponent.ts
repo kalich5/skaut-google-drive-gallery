@@ -12,7 +12,8 @@ import { SgdgSettingsOverrideComponent } from './SgdgSettingsOverrideComponent';
 
 interface SgdgEditorComponentState {
 	error: string | undefined;
-	list: Array<string> | undefined;
+	list: Array<PartialDirectory> | undefined;
+	path: Array<PartialDirectory>;
 }
 
 export class SgdgEditorComponent extends Component<
@@ -21,7 +22,7 @@ export class SgdgEditorComponent extends Component<
 > {
 	public constructor(props: BlockEditProps<Attributes>) {
 		super(props);
-		this.state = { error: undefined, list: undefined };
+		this.state = { error: undefined, list: undefined, path: [] };
 	}
 
 	public override componentDidMount(): void {
@@ -36,7 +37,7 @@ export class SgdgEditorComponent extends Component<
 	}
 
 	public override render(): React.ReactNode {
-		const { error, list } = this.state;
+		const { error, list, path } = this.state;
 		const InspectorControls =
 			// eslint-disable-next-line @typescript-eslint/no-deprecated, @typescript-eslint/no-unnecessary-condition -- In older versions of Gutenberg, InspectorControls was on editor
 			blockEditor.InspectorControls ?? editor.InspectorControls;
@@ -48,13 +49,12 @@ export class SgdgEditorComponent extends Component<
 			);
 		}
 		const children = [];
-		const path = this.getAttribute('path') as Array<string>;
 		const pathElements: Array<React.ReactNode> = [
 			createElement(
 				'a',
 				{
-					onClick: (e: Event) => {
-						this.pathClick(e);
+					onClick: () => {
+						this.navigate([]);
 					},
 				},
 				sgdgBlockLocalize.root_name
@@ -72,8 +72,10 @@ export class SgdgEditorComponent extends Component<
 							createElement(
 								'label',
 								{
-									onClick: (e: Event) => {
-										this.labelClick(e);
+									onClick: () => {
+										this.navigate(
+											path.slice(0, path.length - 1)
+										);
 									},
 								},
 								'..'
@@ -83,6 +85,7 @@ export class SgdgEditorComponent extends Component<
 				);
 			}
 			for (let i = 0; i < list.length; i++) {
+				const folder = list[i];
 				const lineClass =
 					(0 === path.length && 1 === i % 2) ||
 					(0 < path.length && 0 === i % 2)
@@ -98,28 +101,27 @@ export class SgdgEditorComponent extends Component<
 							createElement(
 								'label',
 								{
-									onClick: (e: Event) => {
-										this.labelClick(e);
+									onClick: () => {
+										this.navigate(path.concat(folder));
 									},
 								},
-								list[i]
+								folder.name
 							)
 						)
 					)
 				);
 			}
-			for (const segment of path) {
+			for (let i = 0; i < path.length; i++) {
 				pathElements.push(' > ');
 				pathElements.push(
 					createElement(
 						'a',
 						{
-							'data-id': segment,
-							onClick: (e: Event) => {
-								this.pathClick(e);
+							onClick: () => {
+								this.navigate(path.slice(0, i + 1));
 							},
 						},
-						segment
+						path[i].name
 					)
 				);
 			}
@@ -173,52 +175,50 @@ export class SgdgEditorComponent extends Component<
 	}
 
 	private ajax(): void {
+		const pathIds = this.getAttribute('path_ids') as
+			Array<string> | undefined;
 		void $.get(
 			sgdgBlockLocalize.ajax_url,
 			{
 				_ajax_nonce: sgdgBlockLocalize.nonce,
-				action: 'list_gallery_dir',
-				path: this.getAttribute('path'),
+				action: 'list_gallery_folders',
+				// Blocks created before folder IDs were stored only have the folder names.
+				...(pathIds === undefined
+					? { path: this.getAttribute('path') }
+					: { path_ids: pathIds }),
 			},
-			(data: ListGalleryDirResponse) => {
+			(data: ListGalleryFoldersResponse) => {
 				if (isError(data)) {
 					this.setState({ error: data.error });
 				} else {
-					this.setState({ list: data.directories });
+					this.setState({ list: data.directories, path: data.path });
+					this.storePath(data.path);
 				}
 			}
 		);
 	}
 
-	private labelClick(e: Event): void {
-		if (e.currentTarget === null) {
-			return;
-		}
-		const newDir = $(e.currentTarget).text();
-		let path = this.getAttribute('path') as Array<string>;
-		if ('..' === newDir) {
-			path = path.slice(0, path.length - 1);
-		} else {
-			path = path.concat(newDir);
-		}
-		this.setAttribute('path', path);
-		this.setState({ error: undefined, list: undefined }, () => {
+	private navigate(path: Array<PartialDirectory>): void {
+		this.storePath(path);
+		this.setState({ error: undefined, list: undefined, path }, () => {
 			this.ajax();
 		});
 	}
 
-	private pathClick(e: Event): void {
-		if (e.currentTarget === null) {
+	/*
+	 * Stores both the IDs and the names of the folders. The IDs are used to find the gallery, so renaming a folder doesn't break it. The names are kept up to date as a fallback and for older versions of the plugin.
+	 */
+	private storePath(path: Array<PartialDirectory>): void {
+		const { setAttributes } = this.props;
+		const ids = path.map((folder) => folder.id);
+		const names = path.map((folder) => folder.name);
+		if (
+			JSON.stringify(ids) ===
+				JSON.stringify(this.getAttribute('path_ids')) &&
+			JSON.stringify(names) === JSON.stringify(this.getAttribute('path'))
+		) {
 			return;
 		}
-		let path = this.getAttribute('path') as Array<string>;
-		path = path.slice(
-			0,
-			path.indexOf($(e.currentTarget).data('id') as string) + 1
-		);
-		this.setAttribute('path', path);
-		this.setState({ error: undefined, list: undefined }, () => {
-			this.ajax();
-		});
+		setAttributes({ path: names, path_ids: ids });
 	}
 }

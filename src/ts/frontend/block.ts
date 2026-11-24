@@ -50,6 +50,10 @@ registerBlockType('skaut-google-drive-gallery/gallery', {
 			default: [],
 			type: 'array',
 		},
+		// The IDs of the folders in `path`. Not set for blocks created before folder IDs were stored, they are added when the block is edited or by the background upgrade.
+		path_ids: {
+			type: 'array',
+		},
 		preview_loop: {
 			type: 'string',
 		},
