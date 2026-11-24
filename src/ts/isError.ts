@@ -1,7 +1,6 @@
 export function isError(
 	data:
 		| GalleryResponse
-		| ListGalleryDirResponse
 		| ListGalleryFoldersResponse
 		| ListGdriveDirResponse
 		| PageResponse

@@ -96,7 +96,7 @@ require_once __DIR__ . '/admin/class-block-folders.php';
 require_once __DIR__ . '/admin/class-block-upgrade.php';
 require_once __DIR__ . '/admin/class-oauth-helpers.php';
 require_once __DIR__ . '/admin/class-settings-pages.php';
-require_once __DIR__ . '/admin/class-tinymce-plugin.php';
+require_once __DIR__ . '/admin/class-shortcode-conversion.php';
 
 require_once __DIR__ . '/class-main.php';
 

@@ -10,7 +10,7 @@ namespace Sgdg;
 use Sgdg\Admin\Block_Folders;
 use Sgdg\Admin\Block_Upgrade;
 use Sgdg\Admin\Settings_Pages;
-use Sgdg\Admin\TinyMCE_Plugin;
+use Sgdg\Admin\Shortcode_Conversion;
 use Sgdg\Frontend\Block;
 use Sgdg\Frontend\Gallery;
 use Sgdg\Frontend\Page;
@@ -37,9 +37,9 @@ final class Main {
 		new Gallery();
 		new Video_Proxy();
 		new Settings_Pages();
-		new TinyMCE_Plugin();
 		new Block_Folders();
 		new Block_Upgrade();
+		new Shortcode_Conversion();
 	}
 
 	/**

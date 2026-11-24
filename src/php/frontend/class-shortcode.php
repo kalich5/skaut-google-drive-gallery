@@ -7,19 +7,16 @@
 
 namespace Sgdg\Frontend;
 
-use Exception as Base_Exception;
 use Sgdg\API_Client;
 use Sgdg\API_Facade;
 use Sgdg\Exceptions\API_Exception;
 use Sgdg\Exceptions\API_Rate_Limit_Exception;
 use Sgdg\Exceptions\Directory_Not_Found_Exception;
-use Sgdg\Exceptions\Exception as Sgdg_Exception;
 use Sgdg\Exceptions\Internal_Exception;
 use Sgdg\Exceptions\Not_Found_Exception;
 use Sgdg\Exceptions\Plugin_Not_Authorized_Exception;
 use Sgdg\Exceptions\Root_Not_Found_Exception;
 use Sgdg\Frontend\Options_Proxy;
-use Sgdg\Helpers;
 use Sgdg\Options;
 use Sgdg\Script_And_Style_Helpers;
 use Sgdg\Vendor\GuzzleHttp\Promise\PromiseInterface;
@@ -27,7 +24,7 @@ use Sgdg\Vendor\GuzzleHttp\Promise\RejectedPromise;
 use const DAY_IN_SECONDS;
 
 /**
- * Contains all the functions for the shortcode the plugin provides
+ * Contains the rendering of the galleries (used by the block) and the handling of the no longer supported shortcode
  *
  * @phan-constructor-used-for-side-effects
  */
@@ -41,7 +38,7 @@ final class Shortcode {
 	}
 
 	/**
-	 * Registers all the scripts and styles used by the shortcode and adds the shortcode.
+	 * Registers all the scripts and styles used by the galleries and adds the (no longer supported) shortcode.
 	 *
 	 * @return void
 	 */
@@ -68,36 +65,25 @@ final class Shortcode {
 	}
 
 	/**
-	 * Renders the shortcode.
+	 * Renders the shortcode, which is no longer supported.
 	 *
-	 * This function is a wrapper around the `html()` function which converts a slash-delimited path into an array
+	 * Galleries are only supported as blocks. The shortcodes in posts are converted to blocks (or removed from posts using the classic editor) by `Shortcode_Conversion`. A shortcode left elsewhere (e.g. in a widget or a theme template) shows nothing to visitors, so that the raw shortcode isn't printed, and a notice to users who can edit posts.
 	 *
-	 * @see html()
-	 * @see \Sgdg\Frontend\Options_Proxy
+	 * @see \Sgdg\Admin\Shortcode_Conversion
 	 *
-	 * @param array<string, mixed> $atts A list of option overrides, as documented in the Options_Proxy class plus the `path` attribute, which is a slash-delimited string.
-	 *
-	 * @return string The HTML code for the shortcode.
+	 * @return string The notice for editors, an empty string for everyone else.
 	 */
-	public static function render( $atts ) {
-		if ( isset( $atts['path'] ) && '' !== $atts['path'] ) {
-			$atts['path'] = explode( '/', trim( $atts['path'], " /\t\n\r\0\x0B" ) );
+	public static function render() {
+		if ( ! current_user_can( 'edit_posts' ) && ! current_user_can( 'edit_pages' ) ) {
+			return '';
 		}
 
-		try {
-			return self::html( $atts );
-		} catch ( Sgdg_Exception $e ) {
-			return '<div class="sgdg-gallery-container">' . $e->getMessage() . '</div>';
-			// @phpstan-ignore catch.neverThrown (Here for safety, even though it should never actually be thrownvariable.undefined)
-		} catch ( Base_Exception $e ) {
-			if ( Helpers::is_debug_display() ) {
-				return '<div class="sgdg-gallery-container">' . $e->getMessage() . '</div>';
-			}
-
-			return '<div class="sgdg-gallery-container">' .
-				esc_html__( 'Unknown error.', 'skaut-google-drive-gallery' ) .
-				'</div>';
-		}
+		return '<div class="sgdg-gallery-container"><p>' .
+			esc_html__(
+				'The Google Drive gallery shortcode is no longer supported. To show the gallery, use the Google Drive gallery block in the block editor.',
+				'skaut-google-drive-gallery'
+			) .
+			'</p></div>';
 	}
 
 	/**

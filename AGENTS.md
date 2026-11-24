@@ -21,8 +21,8 @@ Hard constraints that shape most of the code:
 `src/` is never loaded directly — everything runs from `dist/`, which `npm run build` assembles:
 
 - `build:css` — gulp: minifies `src/css/{admin,frontend}/*.css` → `dist/{admin,frontend}/css/*.min.css`
-- `build:js:*` — one Vite config per entry point (`block`, `shortcode`, `root_selection`, `tinymce`), each an IIFE bundle
-  with jQuery / `wp.*` / tinymce / imagelightbox / justified-layout kept **external** and mapped to globals
+- `build:js:*` — one Vite config per entry point (`block`, `shortcode`, `root_selection`), each an IIFE bundle
+  with jQuery / `wp.*` / imagelightbox / justified-layout kept **external** and mapped to globals
   (see `vite-builder.config.ts`). Adding an entry point means adding a `*.vite.config.ts` and a `build:js:*` script.
 - `build:deps:composer` — runs php-scoper (`scoper.inc.php`), then rewrites the Composer classmap autoloader into the
   `Sgdg\Vendor\` namespace (the transform in `gulpfile.js`)
@@ -70,13 +70,15 @@ gulp task if a new directory is introduced), then instantiates `Sgdg\Main`.
 
 | Class | Role |
 | --- | --- |
-| `Frontend\Shortcode` | registers the `[sgdg]` shortcode, its scripts and styles |
+| `Frontend\Shortcode` | gallery rendering (used by the block), its scripts and styles; the `[sgdg]` shortcode is no longer supported and renders nothing |
 | `Frontend\Block` | Gutenberg block registration (editor UI in `src/ts/frontend/block*`) |
 | `Frontend\Gallery` | `wp_ajax_gallery` — directory path + first page when a gallery loads or navigates |
 | `Frontend\Page` | `wp_ajax_page` — one page of directories/images/videos (`frontend/page/class-*.php`) |
 | `Frontend\Video_Proxy` | `wp_ajax_video_proxy` — streams Drive videos through WordPress |
 | `Admin\Settings_Pages` | admin screens under `admin/settings-pages/`, incl. `wp_ajax_list_gdrive_dir` |
-| `Admin\TinyMCE_Plugin` | classic-editor shortcode dialog |
+| `Admin\Block_Folders` | `wp_ajax_list_gallery_folders` — folder browser of the block editor, works with folder IDs |
+| `Admin\Block_Upgrade` | WP-Cron job adding folder IDs (`path_ids`) to blocks created before they were stored |
+| `Admin\Shortcode_Conversion` | WP-Cron job converting `[sgdg]` shortcodes to blocks (block editor) or removing them (classic editor), plus the admin notice |
 
 AJAX handlers all follow the same shape: `handle_ajax()` → `Helpers::ajax_wrapper( 'ajax_handler_body' )`, which
 translates the typed exceptions in `src/php/exceptions/` into JSON error responses. Add new failure modes as exception

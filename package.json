@@ -39,7 +39,6 @@
     "build:js:block": "vite build --config block.vite.config.ts",
     "build:js:root_selection": "vite build --config root_selection.vite.config.ts",
     "build:js:shortcode": "vite build --config shortcode.vite.config.ts",
-    "build:js:tinymce": "vite build --config tinymce.vite.config.ts",
     "check": "FORCE_COLOR=1 run-p -c --aggregate-output check:*",
     "check:css-compat": "node scripts/check-css-compat.js",
     "check:js-compat": "es-check es2017 --checkFeatures --not 'dist/bundled/imagelightbox.umd.js,dist/bundled/justified-layout.umd.js' 'dist/**/*.js' && es-check es2017 'dist/bundled/justified-layout.umd.js'",
@@ -114,7 +113,6 @@
     "rimraf": "^6.1.4",
     "stylelint": "^17.16.0",
     "stylelint-config-standard": "^40.0.0",
-    "tinymce": "^8.10.2",
     "typescript": "^6.0.3",
     "typescript-eslint": "^8.72.2",
     "vite": "^8.3.8"

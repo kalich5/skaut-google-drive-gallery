@@ -22,7 +22,6 @@ export function viteConfig(
 					'@wordpress/element',
 					'imagelightbox',
 					'jquery',
-					'tinymce',
 				],
 				output: {
 					entryFileNames: `${sitePart}/js/[name].min.js`,
@@ -35,7 +34,6 @@ export function viteConfig(
 						'@wordpress/element': 'wp.element',
 						imagelightbox: 'imagelightbox',
 						jquery: 'jQuery',
-						tinymce: 'tinymce',
 					},
 				},
 			},

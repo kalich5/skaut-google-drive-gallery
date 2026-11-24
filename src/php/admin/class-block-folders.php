@@ -27,7 +27,7 @@ use Sgdg\Options;
 /**
  * The "list_gallery_folders" AJAX endpoint used by the block editor.
  *
- * Unlike the "list_gallery_dir" endpoint of the TinyMCE plugin, it works with folder IDs, so that renaming a folder doesn't break a gallery.
+ * It works with folder IDs, so that renaming a folder doesn't break a gallery.
  *
  * @phan-constructor-used-for-side-effects
  */

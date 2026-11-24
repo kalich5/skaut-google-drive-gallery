@@ -28,6 +28,12 @@ registerBlockType('skaut-google-drive-gallery/gallery', {
 		dir_ordering_order: {
 			type: 'string',
 		},
+		dir_prefix: {
+			type: 'string',
+		},
+		dir_title_size: {
+			type: 'string',
+		},
 		grid_height: {
 			type: 'number',
 		},
@@ -54,10 +60,25 @@ registerBlockType('skaut-google-drive-gallery/gallery', {
 		path_ids: {
 			type: 'array',
 		},
+		preview_activity_indicator: {
+			type: 'string',
+		},
+		preview_arrows: {
+			type: 'string',
+		},
+		preview_captions: {
+			type: 'string',
+		},
+		preview_close_button: {
+			type: 'string',
+		},
 		preview_loop: {
 			type: 'string',
 		},
 		preview_size: {
+			type: 'number',
+		},
+		preview_speed: {
 			type: 'number',
 		},
 	},

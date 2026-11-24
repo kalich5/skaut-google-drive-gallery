@@ -18,7 +18,7 @@ All the data is sourced from Google Drive with nothing but the plugin configurat
 
 Having the photos in Google Drive also gives you a familiar and easy-to-navigate UI for gallery management. You can give individual people or groups granular permissions to the Drive folder, making them able to add photos to a particular gallery without giving them full access to your site. They will then be able to manage the content of the gallery through Google Drive, without having to learn how to work with WordPress. You can also manage all content in your organization with Shared drives owned by your organization's Google Workspace (formerly known as G Suite).
 
-Using this plugin is very straightforward. Once the plugin is installed and configured, you can add a Google Drive gallery to any page or post. If you are using WordPress 5 or newer with the block editor (i. e. Gutenberg), there is a block that you can add that will allow you to choose a folder with a graphical user interface. It also makes it possible to configure each individual gallery very easily, should you want to do that. If you are using an older WordPress version or are still using the classic editor, there is a shortcode you can use instead of the block.
+Using this plugin is very straightforward. Once the plugin is installed and configured, you can add a Google Drive gallery to any page or post. If you are using WordPress 5 or newer with the block editor (i. e. Gutenberg), there is a block that you can add that will allow you to choose a folder with a graphical user interface. It also makes it possible to configure each individual gallery very easily, should you want to do that. The gallery keeps working even when you rename its folders in Google Drive.
 
 If you want to see how to install, configure and use the plugin, visit our [documentation](https://napoveda.skaut.cz/dobryweb/en-skaut-google-drive-gallery). To see the plugin in action, head on to the [demo page](https://demo-skaut-google-drive-gallery.skauting.cz/).
 
@@ -26,7 +26,7 @@ If you want to see how to install, configure and use the plugin, visit our [docu
 * Display any Google Drive folder as a gallery
 * Subfolders are automatically displayed as nested galleries - no need to configure them
 * You can restrict the plugin to a certain folder (we call it the "root" folder), making sure that no data outside this root folder will ever be displayed on your site
-* Insert a gallery with a shortcode or with a click of a button
+* Insert a gallery as a block with a click of a button
 * Provides a Gutenberg block, making sure that your galleries will work even in WordPress 5
 * Also works with Shared drives (formerly known as Team drives)
 * Supports videos as well
@@ -56,10 +56,8 @@ We have a special page in our [documentation](https://napoveda.skaut.cz/dobryweb
 = What are the other options for this plugin? =
 For more info about all the options see the [documentation page](https://napoveda.skaut.cz/dobryweb/en-skaut-google-drive-gallery/en-advanced-options) about advanced options.
 
-= How do I create a shortcode? =
-To show a Google Drive gallery add the shortcode `[sgdg path="Folder name"]` to the page where "Folder name" is a folder in the root directory of the plugin.
-It is also possible to use subdirectories with the shortcode `[sgdg path="Folder name/subfolder/subsubfolder"]`.
-If no path is provided, then the root directory itself is used.
+= Can I still use the shortcode? =
+No, galleries are only supported as blocks in the block editor. When updating, the `[sgdg]` shortcodes in posts using the block editor are converted to gallery blocks automatically. From posts using the classic editor, the shortcodes are removed and the affected posts are listed in a notice in the administration. To keep using the gallery there, switch the post to the block editor and add a Google Drive gallery block.
 
 = Why isn't my video shown? =
 The plugin only shows videos that can be played by the browser. Unfortunately, at the moment, different browsers support different video formats. If you want the best support, we recommend using MP4. Detailed information about which formats are supported by each browser can be found on [Wikipedia](https://en.wikipedia.org/wiki/HTML5_video#Browser_support).

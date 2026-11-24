@@ -40,6 +40,12 @@ delete_option( 'sgdg_preview_captions' );
 delete_option( 'sgdg_block_ids_upgrade_done' );
 delete_option( 'sgdg_block_ids_upgrade_cursor' );
 wp_clear_scheduled_hook( 'sgdg_block_ids_upgrade' );
+delete_option( 'sgdg_shortcode_conversion_done' );
+delete_option( 'sgdg_shortcode_conversion_cursor' );
+delete_option( 'sgdg_shortcode_removed_posts' );
+delete_option( 'sgdg_shortcode_converted_count' );
+delete_option( 'sgdg_shortcode_notice_dismissed' );
+wp_clear_scheduled_hook( 'sgdg_shortcode_conversion' );
 
 // Deprecated.
 delete_option( 'sgdg_image_ordering' );
