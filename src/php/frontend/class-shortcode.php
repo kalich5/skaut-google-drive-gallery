@@ -139,6 +139,11 @@ final class Shortcode {
 				'error_trace_header'                 => esc_html__( 'Stack trace:', 'skaut-google-drive-gallery' ),
 				'grid_height'                        => $options->get( 'grid_height' ),
 				'grid_spacing'                       => $options->get( 'grid_spacing' ),
+				'image_unavailable'                  => esc_html__( 'Preview unavailable', 'skaut-google-drive-gallery' ),
+				'image_unavailable_hint'             => esc_html__(
+					'Google Drive can’t show a preview of this image. The image may be damaged.',
+					'skaut-google-drive-gallery'
+				),
 				'load_more'                          => esc_html__( 'Load more', 'skaut-google-drive-gallery' ),
 				'page_autoload'                      => $options->get( 'page_autoload' ),
 				'page_next'                          => esc_html__( 'Next', 'skaut-google-drive-gallery' ),

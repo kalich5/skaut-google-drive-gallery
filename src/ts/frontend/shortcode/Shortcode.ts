@@ -73,6 +73,22 @@ export class Shortcode {
 	}
 
 	/*
+	 * An image without a preview, which is probably damaged. It can't be opened in the lightbox. The grid layout takes the aspect ratio (4:3) from the bounding box of the SVG.
+	 */
+	private static renderUnavailableImage(): string {
+		return (
+			`<div class="sgdg-grid-a sgdg-image-unavailable" title="${sgdgShortcodeLocalize.image_unavailable_hint}">` +
+			'<svg focusable="false" viewBox="0 0 4 3">' +
+			'<rect width="4" height="3" fill="#f0f0f0"></rect>' +
+			'<path d="M2 .55 2.6 1.65H1.4z" fill="none" stroke="#8f8f8f" stroke-width=".08" stroke-linejoin="round"></path>' +
+			'<path d="M2 .9v.4M2 1.43v.04" stroke="#8f8f8f" stroke-width=".08" stroke-linecap="round"></path>' +
+			'</svg>' +
+			`<div class="sgdg-dir-overlay"><div class="sgdg-dir-name">${sgdgShortcodeLocalize.image_unavailable}</div></div>` +
+			'</div>'
+		);
+	}
+
+	/*
 	 * A placeholder for a video without a thumbnail. The grid layout takes the aspect ratio (16:9) from the bounding box of the SVG.
 	 */
 	private static renderVideoPlaceholder(): string {
@@ -570,6 +586,9 @@ export class Shortcode {
 	}
 
 	private renderImage(page: number, image: Image): string {
+		if ('' === image.thumbnail) {
+			return Shortcode.renderUnavailableImage();
+		}
 		return `<a class="sgdg-grid-a" data-imagelightbox="${this.shortHash}" data-ilb2-id="${image.id}" data-ilb2-caption="${image.description}" data-sgdg-page="${page.toString()}"${Shortcode.renderDownloadAttribute(image.download)} href="${image.image}"><img class="sgdg-grid-img" src="${image.thumbnail}"></a>`;
 	}
 
