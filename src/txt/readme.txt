@@ -3,7 +3,7 @@ Contributors: skaut, marekdedic, kalich5
 Tags: google drive, gallery, google drive gallery, image gallery, video gallery
 Requires at least: 4.9.6
 Tested up to: 7.2
-Stable tag: 2.0.0-beta.1
+Stable tag: 3.0.0-beta.1
 Requires PHP: 5.6
 License: MIT
 License URI: https://github.com/skaut/skaut-google-drive-gallery/blob/master/LICENSE
@@ -99,7 +99,7 @@ Please enable [WordPress debugging](https://wordpress.org/documentation/article/
 
 == Changelog ==
 
-= 2.0.0-beta.1 =
+= 3.0.0-beta.1 =
 **New features**
 
 * Added a download button to the lightbox, so that images and videos can be downloaded with their original names (off by default)
