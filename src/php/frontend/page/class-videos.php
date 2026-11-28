@@ -9,6 +9,7 @@ namespace Sgdg\Frontend\Page;
 
 use PHPMD\Attribute\SuppressWarnings;
 use PHPMD\Rule\Naming\LongVariable;
+use Sgdg\API_Client;
 use Sgdg\API_Facade;
 use Sgdg\Exceptions\Internal_Exception;
 use Sgdg\Exceptions\Plugin_Not_Authorized_Exception;
@@ -22,7 +23,6 @@ use Sgdg\Vendor\GuzzleHttp\Client;
 use Sgdg\Vendor\GuzzleHttp\Cookie\CookieJar;
 use Sgdg\Vendor\GuzzleHttp\Promise\FulfilledPromise;
 use Sgdg\Vendor\GuzzleHttp\Promise\PromiseInterface;
-use Sgdg\Vendor\GuzzleHttp\Promise\Utils;
 use const DAY_IN_SECONDS;
 
 /**
@@ -89,8 +89,8 @@ final class Videos {
 					$raw_videos
 				);
 
-				return Utils::all(
-					array( $videos, Utils::all( $video_url_promises ) )
+				return API_Client::all(
+					array( $videos, API_Client::all( $video_url_promises ) )
 				);
 			}
 		)->then(
