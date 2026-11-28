@@ -3,7 +3,7 @@ Contributors: skaut, marekdedic, kalich5
 Tags: google drive, gallery, google drive gallery, image gallery, video gallery
 Requires at least: 4.9.6
 Tested up to: 7.2
-Stable tag: 2.13.15
+Stable tag: 2.0.0-beta.1
 Requires PHP: 5.6
 License: MIT
 License URI: https://github.com/skaut/skaut-google-drive-gallery/blob/master/LICENSE
@@ -98,6 +98,50 @@ Please enable [WordPress debugging](https://wordpress.org/documentation/article/
 6. Advanced options
 
 == Changelog ==
+
+= 2.0.0-beta.1 =
+**New features**
+
+* Added a download button to the lightbox, so that images and videos can be downloaded with their original names (off by default)
+* Added an option to show one page at a time with navigation between pages instead of loading more items
+* Added an option to show the names of videos in the gallery
+* Added a play icon over video thumbnails
+* Added choosing the preview image of a folder: an image whose name starts with `__preview__` is used as the preview and hidden from the gallery
+* Added renaming the gallery root in the breadcrumbs ("Gallery" by default) in the block
+* Added a hint in the block when the folder contains videos that would load faster if shared publicly
+* Added a warning in the settings when the website doesn't use HTTPS, which Google requires
+* Added checking the required PHP extensions when the plugin is activated
+* Images without a preview (probably damaged) are shown with a warning instead of a broken image
+* Videos without a thumbnail are shown with a placeholder instead of being left out
+* Videos whose picture the browser can't show (e.g. HEVC from an iPhone) are replaced with an explanation and a download link
+
+**Fixes**
+
+* Fixed listings of folders with many files failing after the first page
+* Fixed ordering images by time across pages, and images without EXIF time now use their creation time
+* Fixed the error shown when the Google authorization expires: it now explains what happened and links to the settings
+* Fixed galleries in pages served from a page cache showing "The gallery has expired"
+* Fixed late responses breaking the gallery after navigating to another folder
+* Fixed links to an image opened in the lightbox
+* Fixed opening folders and breadcrumbs in a new tab
+* Fixed the breadcrumbs showing the name of the target folder instead of the shortcut name
+* Fixed the fullscreen button of the lightbox
+* Fixed saving a post with a gallery in the block editor
+* Fixed the block with a renamed or deleted folder, it now offers going up one level or to the gallery root
+* Fixed themes changing the look of the block in the editor
+* Fixed long labels in the block settings overlapping the inputs
+* Fixed the classic editor button on WordPress 4.9 and inserting the shortcode in the text mode
+* Fixed proxied videos running out of memory and being downloaded as "admin-ajax"
+* Fixed the authorised domain shown in the settings for websites on a subdomain
+* Fixed uninstalling on multisite, the options of all sites are now deleted
+* Fixed the settings styles being loaded on every admin page
+
+**Other**
+
+* The plugin uses the imagesLoaded library bundled with WordPress
+* Updated guzzlehttp/promises to 1.5.3
+* Explained in the FAQ when videos should be shared publicly
+* Tested up to WordPress 7.2
 
 = 2.13.15 =
 * Updated lightbox to [v4](https://github.com/marekdedic/imagelightbox/releases/tag/4.0.0)
